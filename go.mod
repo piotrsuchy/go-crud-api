@@ -1,4 +1,4 @@
-module go-crud-api
+module example.com/you/go-crud-api-test
 
 go 1.20
 
