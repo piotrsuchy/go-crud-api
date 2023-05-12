@@ -11,33 +11,30 @@ import (
 )
 
 type MovieHandler struct {
-	Movie []models.Movie
+	Movies []models.Movie
 }
 
-func getMovies(w http.ResponseWriter, r *http.Request) {
+func (mh *MovieHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	// encoding into json
-	json.NewEncoder(w).Encode(movies)
+	json.NewEncoder(w).Encode(mh.Movies)
 }
 
-func deleteMovie(w http.ResponseWriter, r *http.Request) {
+func (mh *MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	for index, item := range movies {
+	for index, item := range mh.Movies {
 		if item.ID == params["id"] {
-			// append all the other data in the place of the movie we want to delete
-			movies = append(movies[:index], movies[index+1:]...)
+			mh.Movies = append(mh.Movies[:index], mh.Movies[index+1:]...)
 			break
 		}
 	}
-	json.NewEncoder(w).Encode(movies)
+	json.NewEncoder(w).Encode(mh.Movies)
 }
 
-func getMovie(w http.ResponseWriter, r *http.Request) {
+func (mh *MovieHandler) GetMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	// using _ for a variable we won't use
-	for _, item := range movies {
+	for _, item := range mh.Movies {
 		if item.ID == params["id"] {
 			json.NewEncoder(w).Encode(item)
 			return
@@ -45,35 +42,25 @@ func getMovie(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func createMovie(w http.ResponseWriter, r *http.Request) {
+func (mh *MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var movie Movie
+	var movie models.Movie
 	_ = json.NewDecoder(r.Body).Decode(&movie)
-	// creating a random value from that range
 	movie.ID = strconv.Itoa(rand.Intn(10000000000))
-	movies = append(movies, movie)
+	mh.Movies = append(mh.Movies, movie)
 	json.NewEncoder(w).Encode(movie)
 }
 
-func updateMovie(w http.ResponseWriter, r *http.Request) {
-	// this is not the way to do it when working with databases
-	// but for this case it is a possible approach
-
-	// set json content type
+func (mh *MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	// params
 	params := mux.Vars(r)
-	// loop over the movies, range
-	for index, item := range movies {
+	for index, item := range mh.Movies {
 		if item.ID == params["id"] {
-			// delete the movie with the id youve sent
-			movies = append(movies[:index], movies[index+1:]...)
-			var movie Movie
-			// add a new movie - the movie that we send in the body of postman
+			mh.Movies = append(mh.Movies[:index], mh.Movies[index+1:]...)
+			var movie models.Movie
 			_ = json.NewDecoder(r.Body).Decode(&movie)
 			movie.ID = params["id"]
-			movies = append(movies, movie)
+			mh.Movies = append(mh.Movies, movie)
 			json.NewEncoder(w).Encode(movie)
 			return
 		}
