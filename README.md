@@ -2,6 +2,10 @@
 
 In this repo I've put the code for a simple CRUD API made with Golang. All the code is within the main.go file and there's no frontend, however I've tested it with POSTMAN API calls:
 
+## SCRIPTS
+
+I've also created bash scripts to help run and navigate the project - I even implemented test script that makes sure the curl commands are working as expected - meaning the http requests return the correct status codes.
+
 ## GET ALL
 
 A screenshot from postman after sending a GET ALL get request:
